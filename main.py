@@ -1,8 +1,7 @@
-import pandas as pd
+from pandas import DataFrame, read_excel
 from collections import defaultdict
 from tqdm import tqdm
-import sys
-
+from sys import argv
 
 def extract_code(product_title):
     return "-".join(product_title.split("-")[2:8])
@@ -10,19 +9,19 @@ def extract_code(product_title):
 
 def process_data(customsize_path = "customSizeData__15-06-2026.xlsx", productrate_path = "Product_rate 300426.xlsx", ups_path = "UpsRatio.xlsx", final_path = "FinalResult.xlsx"):
     
-    df_customsize = pd.read_excel(
+    df_customsize = read_excel(
         customsize_path,
         engine="calamine"
     )
     df_customsize = df_customsize.to_dict(orient="records")
 
-    df_productrate = pd.read_excel(
+    df_productrate = read_excel(
         productrate_path,
         engine="calamine"
     )
     df_productrate = df_productrate.to_dict(orient="records")
 
-    df_ups = pd.read_excel(
+    df_ups = read_excel(
         ups_path,
         engine="calamine"
     )
@@ -149,13 +148,13 @@ def process_data(customsize_path = "customSizeData__15-06-2026.xlsx", productrat
         "Rounded Final Rate"
     ]
 
-    df_final = pd.DataFrame(final_db, columns=column_order)
+    df_final = DataFrame(final_db, columns=column_order)
     df_final.to_excel(final_path, index=False)
 
 
 if __name__ == "__main__":
 
-    args = sys.argv[1:]
+    args = argv[1:]
 
     process_data(*args)
 
