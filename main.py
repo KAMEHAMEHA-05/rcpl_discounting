@@ -34,7 +34,7 @@ def process_data(customsize_path = "customSizeData__15-06-2026.xlsx", productrat
         value = {
             k: v
             for k, v in row.items()
-            if k not in ["Media", "Std. Qty", "Ref. Size for Rate"]
+            if k not in {"Media", "Std. Qty", "Ref. Size for Rate"}
         }
 
         customsize[key].append(value)
@@ -46,13 +46,13 @@ def process_data(customsize_path = "customSizeData__15-06-2026.xlsx", productrat
         value = {
             k: v
             for k, v in row.items()
-            if k not in ["Media", "Product Size"]
+            if k not in {"Media", "Product Size"}
         }
 
         ups[key]=value
 
     productrate = defaultdict(list)
-    for row in tqdm(df_productrate):
+    for row in df_productrate:
 
         product_title = row["Product Title"]
         product_size = row["Product Size"]
@@ -67,7 +67,7 @@ def process_data(customsize_path = "customSizeData__15-06-2026.xlsx", productrat
 
     final_db = []
 
-    for row in df_productrate:
+    for row in tqdm(df_productrate):
 
         media_type = row["Media Type"]
         product_size = row["Product Size"]
@@ -92,17 +92,15 @@ def process_data(customsize_path = "customSizeData__15-06-2026.xlsx", productrat
             key_customsize = (media_type, product_quantity, ref_size)
             value_customsize = customsize.get(key_customsize, [])
 
+            pkg_cost_per_up = 0
+            discount_rate = 0
+
             if value_customsize:
                 for item in value_customsize:
                     if(item["Ups From"] <= ups_value <= item["Ups To"]):
                         pkg_cost_per_up = item["Pkg. Cost per Up"]
                         discount_rate = item["Basic Discount %"]
-                    else:
-                        pkg_cost_per_up = 0
-                        discount_rate = 0
-            else:
-                pkg_cost_per_up = 0
-                discount_rate = 0
+                        break
 
             total_pkg_cost = pkg_cost_per_up * ups_value
             interim_rate = total_rate - total_pkg_cost
