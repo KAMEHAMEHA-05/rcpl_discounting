@@ -7,7 +7,7 @@ def extract_code(product_title):
     return "-".join(product_title.split("-")[2:8])
 
 
-def process_data(customsize_path = "customSizeData__15-06-2026.xlsx", productrate_path = "Product_rate 300426.xlsx", ups_path = "UpsRatio.xlsx", final_path = "FinalResult.xlsx"):
+def process_data(customsize_path = "CustomSizeData.xlsx", productrate_path = "ProductRate.xlsx", ups_path = "ProductWiseUps.xlsx", final_path = "FinalResult.xlsx", error_path = "Error.xlsx"):
     
     df_customsize = read_excel(
         customsize_path,
@@ -66,6 +66,7 @@ def process_data(customsize_path = "customSizeData__15-06-2026.xlsx", productrat
 
 
     final_db = []
+    error_db = []
 
     for row in tqdm(df_productrate):
 
@@ -83,8 +84,21 @@ def process_data(customsize_path = "customSizeData__15-06-2026.xlsx", productrat
             #print("Code:", code)
             key_productrate = (code, ref_size)
             value_productrate = productrate.get(key_productrate)
-            if not value_productrate: continue
+            if not value_productrate: 
+                error_db.append({
+                    "Product Title": product_title,
+                    "Status": "N"
+                })
+                continue
+
             rate = value_productrate.get("Rate")
+            if(rate == 0):
+                error_db.append({
+                    "Product Title": product_title,
+                    "Status": "0"
+                })
+                continue
+
             total_rate = rate * ups_value
             min_title = value_productrate.get("Product Title")
 
@@ -127,7 +141,7 @@ def process_data(customsize_path = "customSizeData__15-06-2026.xlsx", productrat
             })
 
 
-    column_order = [
+    column_order_result = [
         "Product Title",
         "Min Product Title",
         "Media Type",
@@ -146,8 +160,16 @@ def process_data(customsize_path = "customSizeData__15-06-2026.xlsx", productrat
         "Rounded Final Rate"
     ]
 
-    df_final = DataFrame(final_db, columns=column_order)
+    column_order_error = [
+        "Product Title",
+        "Status"
+    ]
+
+    df_final = DataFrame(final_db, columns=column_order_result)
     df_final.to_excel(final_path, index=False)
+
+    df_error = DataFrame(error_db, columns=column_order_error)
+    df_error.to_excel(error_path, index=False)
 
 
 if __name__ == "__main__":
