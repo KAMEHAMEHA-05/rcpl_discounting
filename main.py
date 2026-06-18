@@ -87,7 +87,12 @@ def process_data(customsize_path = "CustomSizeData.xlsx", productrate_path = "Pr
             if not value_productrate: 
                 error_db.append({
                     "Product Title": product_title,
-                    "Status": "N"
+                    "Base Product Title": code,
+                    "Min Ref. Size for Rate": ref_size,
+                    "Effective Date From": row["Effective Date From"],
+                    "Effective Date To": row["Effective Date To"],
+                    "Status": row["Status"],
+                    "Error_Flag": "N"
                 })
                 continue
 
@@ -95,7 +100,12 @@ def process_data(customsize_path = "CustomSizeData.xlsx", productrate_path = "Pr
             if(rate == 0):
                 error_db.append({
                     "Product Title": product_title,
-                    "Status": "0"
+                    "Base Product Title": code,
+                    "Min Ref. Size for Rate": ref_size,
+                    "Effective Date From": row["Effective Date From"],
+                    "Effective Date To": row["Effective Date To"],
+                    "Status": row["Status"],
+                    "Error_Flag": "0"
                 })
                 continue
 
@@ -162,7 +172,12 @@ def process_data(customsize_path = "CustomSizeData.xlsx", productrate_path = "Pr
 
     column_order_error = [
         "Product Title",
-        "Status"
+        "Base Product Title",
+        "Min Ref. Size for Rate",
+        "Effective Date From",
+        "Effective Date To",
+        "Status",
+        "Error_Flag"
     ]
 
     df_final = DataFrame(final_db, columns=column_order_result)

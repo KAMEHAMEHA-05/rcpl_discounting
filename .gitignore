@@ -14,3 +14,4 @@ rcpl_discounting_linux
 rcpl_discounting_windows.exe
 .~lock.Error.xlsx#
 Error.xlsx
+*.xlsx
